@@ -178,6 +178,7 @@ $(document).ready(function(){
     $('#resetCount').click(function() {
         stopListening();
         $('#setupDiv').show();
+        $('#cancel').show();
         $('#runDiv'  ).hide();
     });
 });

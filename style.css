@@ -10,6 +10,13 @@ body {
     max-width: 650px;
     text-align: center;
 }
+a {
+    color: #ddd;
+    text-decoration: none;
+}
+a:hover {
+    color: #bbb;
+}
 #header {
     margin: 10px auto 20px auto;
 }
@@ -35,4 +42,7 @@ label {
 }
 #runDiv, #cancel {
     display: none;
+}
+#ad-block {
+    margin-top: 20px;
 }
