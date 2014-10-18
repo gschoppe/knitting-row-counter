@@ -1,0 +1,38 @@
+body {
+    text-align: center;
+    color: #fff;
+    font-family: helvetica, arial, sans-serif;
+    background-color: #000;
+}
+.wrap {
+    margin: 0 auto;
+    width: 100%;
+    max-width: 650px;
+    text-align: center;
+}
+#header {
+    margin: 10px auto 20px auto;
+}
+#header h1 {
+    margin: 0;
+    padding:0;
+}
+label {
+    display: block;
+}
+#rowCount {
+    display: block;
+    width: 100%;
+    height: 20%;
+    min-height: 100px;
+    text-align: center;
+    font-size: 500%;
+    font-weight: bold;
+    color: #fff;
+    background-color: #000;
+    border: none;
+    
+}
+#runDiv, #cancel {
+    display: none;
+}
