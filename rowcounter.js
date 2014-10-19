@@ -101,9 +101,17 @@ var keyMap = {
 };
 
 function initialize() {
-    $('#rowCount').val(parseInt($('#initialCount').val()));
-    $('#goalNum').text(parseInt($('#goal').val()));
-    var percent = Math.floor((parseInt($('#initialCount').val())/parseInt($('#goal').val()))*100);
+    var settings = {
+        count: parseInt($('#initialCount').val()),
+        goal : parseInt($('#goal').val()),
+        key  : $('#keyCode').val()
+    }
+    $.cookie('knitting-settings', settings, { expires: 30 });
+    $('#rowCount').val(settings.count);
+    $('#goalNum').text(settings.goal);
+    var percent = 0
+    if(settings.goal > 0)
+        percent = Math.floor((settings.count/settings.goal)*100);
     $('#goalPercent').text(percent);
     setColors();
     startListening();
@@ -133,8 +141,18 @@ function stopListening() {
     keyIsDown = false;
 }
 function increment() {
-    $('#rowCount').val(parseInt($('#rowCount').val())+1);
-    var percent = Math.floor((parseInt($('#rowCount').val())/parseInt($('#goalNum').text()))*100);
+    var settings = $.cookie('knitting-settings');
+    if (typeof settings == 'undefined') {
+        settings = {
+            count: parseInt($('#rowCount').val()),
+            goal : parseInt($('#goal').val()),
+            key  : $('#keyCode').val()
+        }
+    }
+    settings.count = parseInt($('#rowCount').val())+1;
+    $.cookie('knitting-settings', settings, { expires: 30 });
+    $('#rowCount, #initialCount').val(settings.count);
+    var percent = Math.floor((settings.count/settings.goal)*100);
     $('#goalPercent').text(percent);
     setColors();
 }
@@ -158,13 +176,25 @@ function setColors() {
 }
 
 $(document).ready(function(){
+    $.cookie.json = true;
+    var settings = $.cookie('knitting-settings');
+    if (typeof settings == 'undefined') {
+        settings = {
+            count: 0,
+            goal : 100,
+            key  : keyMap[defaultKeyCode]
+        }
+    }
+    $('#initialCount').val(settings.count);
+    $('#goal').val(settings.goal);
     $.each(keyMap, function(name, code) {
         var $element = $("<option></option>").attr("value",code).text(name);
-        if(name == defaultKeyCode) {
+        if(code == settings.key) {
             $element.attr("selected",1);
         }
         $('#keyCode').append($element);
     });
+    
     $('#startCount').click(function() {
         initialize();
         $('#setupDiv').hide();
