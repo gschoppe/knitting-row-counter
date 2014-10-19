@@ -43,6 +43,9 @@ label {
 #runDiv, #cancel {
     display: none;
 }
+#pedalsDiv p, #pedalsDiv ul {
+    text-align: left;
+}
 #ad-block {
     margin-top: 20px;
 }
