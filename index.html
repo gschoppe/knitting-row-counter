@@ -16,6 +16,8 @@
     <div class="wrap" id="header">
         <h1>Knitting Row Counter</h1>
         <i>A speedy project by Greg Schoppe (<a href="http://gschoppe.com">gschoppe.com</a>)</i><br/>
+        <!-- Go to www.addthis.com/dashboard to customize your tools -->
+        <div class="addthis_sharing_toolbox"></div>
         <a href="pedals.html">See Compatible Foot Pedals &raquo;</a>
     </div>
     <div id="setupDiv" class="wrap">
@@ -24,6 +26,9 @@
         <input type="number" name="initialCount" id="initialCount" value="0"/><br/>
         <label for="initialCount">Total Rows Needed: </label>
         <input type="number" name="goal" id="goal" value="1"/>
+        <label for="repeatFreq">Pattern repeats every X rows: </label>
+        <input type="number" name="repeatFreq" id="repeatFreq" value="0"/><br/>
+        <i>(enter 0 to not track repeats)</i>
         <br/><br/>
         <label for="keyCode">Key to Watch: </label>
         <select name="keyCode" id="keyCode"></select><br/><br/>
@@ -33,7 +38,9 @@
     <div id="runDiv" class="wrap">
         <label for="rowCount">Current Row #:</label>
         <input type="number" name="rowCount" id="rowCount" value='0' disabled='1'/>
-        of <span id="goalNum">0</span> Total Rows (<span id="goalPercent">0</span>% Done)
+        <div id="freqPips"></div>
+        of <span id="goalNum">0</span> Total Rows (<span id="goalPercent">0</span>% Done)<br/>
+        last row completed: <span id="lastRow" data-value="0">never</span>
         <br/><br/>
         <input type="button" name="addRow" id="addRow" value="Finished a Row"/>
         <input type="button" name="resetCount" id="resetCount" value="Change Settings"/>
@@ -58,6 +65,8 @@
           ga('send', 'pageview');
 
         </script>
+        <!-- Go to www.addthis.com/dashboard to customize your tools -->
+        <script type="text/javascript" src="//s7.addthis.com/js/300/addthis_widget.js#pubid=ra-512a98654ff68c94" async></script>
     </div>
 </body>
 </html>

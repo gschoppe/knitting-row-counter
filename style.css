@@ -30,16 +30,40 @@ label {
 #rowCount {
     display: block;
     width: 100%;
-    height: 20%;
-    min-height: 100px;
+    height: 100px;
+    padding: 0;
     text-align: center;
-    font-size: 500%;
+    font-size: 90px;
     font-weight: bold;
     color: #fff;
     background-color: #000;
     border: none;
     
 }
+#rowCount::-webkit-inner-spin-button, 
+#rowCount::-webkit-outer-spin-button { 
+    -webkit-appearance: none;
+    margin: 0;
+}
+#freqPips span {
+    display: inline-block;
+    width: 10px;
+    height: 10px;
+    margin: 0 5px 5px 5px;
+    background-color: #F00;
+    -webkit-border-radius: 5px;
+    -moz-border-radius: 5px;
+    border-radius: 5px;
+}
+#freqPips span.done {
+    background-color: #0F0;
+}
+
+input[type=button] {
+    display: inline-block;
+    padding: 10px 5px;
+}
+
 #runDiv, #cancel {
     display: none;
 }

@@ -100,14 +100,38 @@ var keyMap = {
     'apostrophe' : 222,
 };
 
+function formatTimestamp(timestamp) {
+    if(typeof timestamp == 'undefined' || timestamp == 0)
+        return("never");
+    var dateObj = new Date(timestamp);
+    var d = {
+        year   : pad(dateObj.getFullYear(),4),
+        month  : pad(dateObj.getMonth()+1,2),
+        day    : pad(dateObj.getDate(),2),
+        hour   : pad(dateObj.getHours(),2),
+        minute : pad(dateObj.getMinutes(),2),
+        second : pad(dateObj.getSeconds(),2)
+    }
+    // american format: hh:mm:ss dd/mm/yyyy
+    return(d.hour+':'+d.minute+':'+d.second+' '+d.month+'/'+d.day+'/'+d.year);
+}
+function pad(n, width, z) {
+    z = z || '0';
+    n = n + '';
+    return n.length >= width ? n : new Array(width - n.length + 1).join(z) + n;
+}
+
 function initialize() {
     var settings = {
-        count: parseInt($('#initialCount').val()),
-        goal : parseInt($('#goal').val()),
-        key  : $('#keyCode').val()
+        count      : parseInt($('#initialCount').val()),
+        goal       : parseInt($('#goal').val()),
+        key        : $('#keyCode').val(),
+        lastRow    : $('#lastRow').data('value'),
+        repeatFreq : parseInt($('#repeatFreq').val())
     }
     $.cookie('knitting-settings', settings, { expires: 30 });
     $('#rowCount').val(settings.count);
+    placeFreqPips(settings.repeatFreq, settings.count);
     $('#goalNum').text(settings.goal);
     var percent = 0
     if(settings.goal > 0)
@@ -144,17 +168,37 @@ function increment() {
     var settings = $.cookie('knitting-settings');
     if (typeof settings == 'undefined') {
         settings = {
-            count: parseInt($('#rowCount').val()),
-            goal : parseInt($('#goal').val()),
-            key  : $('#keyCode').val()
+            count      : parseInt($('#rowCount').val()),
+            goal       : parseInt($('#goal').val()),
+            key        : $('#keyCode').val(),
+            lastRow    : 0,
+            repeatFreq : parseInt($('#repeatFreq').val())
         }
     }
-    settings.count = parseInt($('#rowCount').val())+1;
+    settings.count   = parseInt($('#rowCount').val())+1;
+    settings.lastRow = new Date().getTime();
     $.cookie('knitting-settings', settings, { expires: 30 });
     $('#rowCount, #initialCount').val(settings.count);
-    var percent = Math.floor((settings.count/settings.goal)*100);
+    $('#lastRow').data('value', settings.lastRow).text(formatTimestamp(settings.lastRow));
+    placeFreqPips(settings.repeatFreq, settings.count);
+    var percent = 0;
+    if(settings.goal > 0)
+        percent = Math.floor((settings.count/settings.goal)*100);
     $('#goalPercent').text(percent);
     setColors();
+}
+function placeFreqPips(freq, count) {
+    console.log(freq + " " + count);
+    if(typeof freq == 'undefined'||freq <= 1) return;
+    var currentPip = count % freq;
+    var $element;
+    $('#freqPips').html("");
+    for (i = 0; i < freq; i++) { 
+        $element = $('<span></span>');
+        if(i <= currentPip)
+            $element.addClass('done');
+        $('#freqPips').append($element);
+    }
 }
 function setColors() {
     var color="";
@@ -180,13 +224,17 @@ $(document).ready(function(){
     var settings = $.cookie('knitting-settings');
     if (typeof settings == 'undefined') {
         settings = {
-            count: 0,
-            goal : 100,
-            key  : keyMap[defaultKeyCode]
+            count      : 0,
+            goal       : 100,
+            key        : keyMap[defaultKeyCode],
+            repeatFreq : 0,
+            lastRow    : 0
         }
     }
     $('#initialCount').val(settings.count);
     $('#goal').val(settings.goal);
+    $('#repeatFreq').val(settings.repeatFreq);
+    $('#lastRow').data('value', settings.lastRow).text(formatTimestamp(settings.lastRow));
     $.each(keyMap, function(name, code) {
         var $element = $("<option></option>").attr("value",code).text(name);
         if(code == settings.key) {
