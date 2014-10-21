@@ -1,0 +1,48 @@
+.color-primary-bg {
+    background-color: #FFF;
+}
+.color-primary-fg {
+    color: #FFF;
+}
+.color-secondary-bg {
+    background-color: #000;
+}
+.color-secondary-fg {
+    color:#000;
+}
+.color-link {
+    color:#777;
+}
+.color-link:hover {
+    color:#444;
+}
+.color-pip {
+    background-color: #F00;
+}
+.color-pip-done {
+    background-color: #0F0;
+}
+.percent0,
+.percent10,
+.percent20,
+.percent30,
+.percent40 {
+    color: #000;
+}
+.percent50,
+.percent60 {
+    color: #F60;
+}
+.percent70,
+.percent80 {
+    color: #FA0;
+}
+.percent90 {
+    color: #FF0;
+}
+.percent100 {
+    color: #0F0;
+}
+.percentOver {
+    color: #F00
+}

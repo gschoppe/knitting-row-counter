@@ -137,7 +137,7 @@ function initialize() {
     if(settings.goal > 0)
         percent = Math.floor((settings.count/settings.goal)*100);
     $('#goalPercent').text(percent);
-    setColors();
+    setColors(percent);
     startListening();
 }
 var keyIsDown = true;
@@ -185,38 +185,54 @@ function increment() {
     if(settings.goal > 0)
         percent = Math.floor((settings.count/settings.goal)*100);
     $('#goalPercent').text(percent);
-    setColors();
+    setColors(percent);
 }
 function placeFreqPips(freq, count) {
     console.log(freq + " " + count);
     if(typeof freq == 'undefined'||freq <= 1) return;
     var currentPip = count % freq;
+    var completeLoops = Math.floor(count/freq);
     var $element;
     $('#freqPips').html("");
+    $('#freqPips').append($("<b></b>").text(completeLoops+'x +'));
     for (i = 0; i < freq; i++) { 
         $element = $('<span></span>');
-        if(i <= currentPip)
-            $element.addClass('done');
+        if(i <= currentPip) {
+            $element.addClass('color-pip-done');
+        } else {
+            $element.addClass('color-pip');
+        }
         $('#freqPips').append($element);
     }
 }
-function setColors() {
-    var color="";
-    var percent = (parseInt($('#rowCount').val())/parseInt($('#goalNum').text()))*100;
-    if(percent < 50) {
-        color = "#FFF";
-    } else if(percent < 75) {
-        color = "#F60";
+function setColors(percent) {
+    $('#rowCount').removeClass("percent0  percent10 percent20 percent30 percent40  percent50");
+    $('#rowCount').removeClass("percent60 percent70 percent80 percent90 percent100 percentOver");
+    if(percent < 10) {
+        $('#rowCount').addClass("percent0");
+    } else if(percent < 20) {
+        $('#rowCount').addClass("percent10");
+    } else if(percent < 30) {
+        $('#rowCount').addClass("percent20");
+    } else if(percent < 40) {
+        $('#rowCount').addClass("percent30");
+    } else if(percent < 50) {
+        $('#rowCount').addClass("percent40");
+    } else if(percent < 60) {
+        $('#rowCount').addClass("percent50");
+    } else if(percent < 70) {
+        $('#rowCount').addClass("percent60");
+    } else if(percent < 80) {
+        $('#rowCount').addClass("percent70");
     } else if(percent < 90) {
-        color = "#FA0";
+        $('#rowCount').addClass("percent80");
     } else if(percent < 100) {
-        color = "#FF0";
+        $('#rowCount').addClass("percent90");
     } else if(percent == 100) {
-        color = "#0F0";
+        $('#rowCount').addClass("percent100");
     } else {
-        color = "#F00";
+        $('#rowCount').addClass("percentOver");
     }
-    $('#rowCount').css('color', color);
 }
 
 $(document).ready(function(){

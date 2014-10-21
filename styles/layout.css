@@ -1,21 +1,12 @@
 body {
     text-align: center;
-    color: #fff;
     font-family: helvetica, arial, sans-serif;
-    background-color: #000;
 }
 .wrap {
     margin: 0 auto;
     width: 100%;
     max-width: 650px;
     text-align: center;
-}
-a {
-    color: #ddd;
-    text-decoration: none;
-}
-a:hover {
-    color: #bbb;
 }
 input, select {
     display: inline-block;
@@ -43,10 +34,7 @@ label {
     text-align: center;
     font-size: 90px;
     font-weight: bold;
-    color: #fff;
-    background-color: #000;
     border: none;
-    
 }
 #rowCount::-webkit-inner-spin-button, 
 #rowCount::-webkit-outer-spin-button { 
@@ -58,15 +46,10 @@ label {
     width: 10px;
     height: 10px;
     margin: 0 5px 5px 5px;
-    background-color: #F00;
     -webkit-border-radius: 5px;
     -moz-border-radius: 5px;
     border-radius: 5px;
 }
-#freqPips span.done {
-    background-color: #0F0;
-}
-
 #runDiv, #cancel {
     display: none;
 }
@@ -131,6 +114,55 @@ label {
         -ms-transform:rotate(45deg);
         -moz-transform:rotate(45deg);
         -o-transform:rotate(45deg);
-        box-shadow:4px 4px 10px rgba(0,0,0,0.8);
+        box-shadow:2px 2px 5px rgba(0,0,0,0.3);
     }
+}
+
+.themeswitch {
+    position: relative; width: 90px;
+    -webkit-user-select:none; -moz-user-select:none; -ms-user-select: none;
+    text-align: left;
+    margin: 10px auto;
+}
+.themeswitch-checkbox {
+    display: none;
+}
+.themeswitch-label {
+    display: block; overflow: hidden; cursor: pointer;
+    border: 2px solid #999999; border-radius: 20px;
+}
+.themeswitch-inner {
+    display: block; width: 200%; margin-left: -100%;
+    -moz-transition: margin 0.3s ease-in 0s; -webkit-transition: margin 0.3s ease-in 0s;
+    -o-transition: margin 0.3s ease-in 0s; transition: margin 0.3s ease-in 0s;
+}
+.themeswitch-inner:before, .themeswitch-inner:after {
+    display: block; float: left; width: 50%; height: 30px; padding: 0; line-height: 30px;
+    font-size: 14px; color: white; font-family: Trebuchet, Arial, sans-serif; font-weight: bold;
+    -moz-box-sizing: border-box; -webkit-box-sizing: border-box; box-sizing: border-box;
+}
+.themeswitch-inner:before {
+    content: "DARK";
+    padding-left: 10px;
+    background-color: #424242; color: #FFFFFF;
+}
+.themeswitch-inner:after {
+    content: "LIGHT";
+    padding-right: 10px;
+    background-color: #EEEEEE; color: #999999;
+    text-align: right;
+}
+.themeswitch-switch {
+    display: block; width: 14px; margin: 8px;
+    background: #FFFFFF;
+    border: 2px solid #999999; border-radius: 20px;
+    position: absolute; top: 0; bottom: 0; right: 56px;
+    -moz-transition: all 0.3s ease-in 0s; -webkit-transition: all 0.3s ease-in 0s;
+    -o-transition: all 0.3s ease-in 0s; transition: all 0.3s ease-in 0s; 
+}
+.themeswitch-checkbox:checked + .themeswitch-label .themeswitch-inner {
+    margin-left: 0;
+}
+.themeswitch-checkbox:checked + .themeswitch-label .themeswitch-switch {
+    right: 0px; 
 }
