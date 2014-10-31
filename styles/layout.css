@@ -1,3 +1,5 @@
+* {box-sizing: border-box}
+
 body {
     text-align: center;
     font-family: helvetica, arial, sans-serif;
@@ -15,12 +17,28 @@ input, select {
 input[type=button] {
     padding: 10px 5px;
 }
+input[type=button].primary {
+    display: inline-block;
+    width: 100%;
+    padding: 20px 5px;
+}
+input[type=button].secondary {
+    display: inline-block;
+    width: 50%;
+}
 #header {
     margin: 10px auto 20px auto;
 }
 #header h1 {
     margin: 0;
     padding:0;
+}
+table#projects {
+    border-collapse:collapse;
+    width: 100%;
+}
+table#projects tr td {
+    border-bottom: 1px solid #CCC;
 }
 label {
     display: block;
@@ -50,15 +68,81 @@ label {
     -moz-border-radius: 5px;
     border-radius: 5px;
 }
-#runDiv, #cancel {
+#project-settings, #runDiv, #cancel {
     display: none;
 }
+.tabs {
+    list-style: none;
+    display: block;
+    text-align: left;
+    margin:0;
+    padding:0;
+}
+.tabs li {
+    display: inline;
+}
+.tabs li a {
+    position: relative;
+    display: inline-block;
+    padding: 5px;
+    margin-bottom: -1px;
+    border: 1px solid #ccc;
+    border-radius: 5px 5px 0 0;
+    background-color: #000;
+}
+.tabs li a.active {
+    border-bottom-color: #000;
+}
+.tab {
+    display: none;
+    border: 1px solid #ccc;
+    padding: 5px;
+}
+.tab.active {
+    display: block;
+}
+
+#projectsWrap {
+    display: inline-block;
+    border: 1px solid #ccc;
+    height: 200px;
+    overflow-y: scroll;
+    margin-bottom: 10px;
+}
+#projects {
+    margin: 0 auto;
+}
+#projects tr td a, #projects tr td span {
+    display: inline-block;
+    padding: 10px;
+}
+#projects tr td a {
+    font-weight: bold;
+    text-decoration: none;
+}
+#projects tr td:first-child {
+    width: 200px;
+}
+
+#projectAdvSettingsGrabber {
+    margin-top: 10px;
+    border: 1px solid #ccc;
+    cursor: pointer;
+    padding: 5px;
+}
+#projectAdvSettings {
+    border: 1px solid #ccc;
+    padding: 5px;
+}
+
 #pedalsDiv p, #pedalsDiv ul {
     text-align: left;
 }
 #ad-block {
     margin-top: 20px;
 }
+
+#forkongithub, #forkongithub * {box-sizing: content-box;}
 
 #forkongithub a{
     display: block;

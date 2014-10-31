@@ -99,97 +99,328 @@ var keyMap = {
     'rbracket'   : 221,
     'apostrophe' : 222,
 };
+var userDataTemplate = {
+    profile : {
+        id            : "",
+        currentProject: false
+    },
+    settings : {
+        theme : "dark",
+        key   : keyMap[defaultKeyCode],
+    },
+    projects : {}
+};
 
-function formatTimestamp(timestamp) {
+var newProjectTemplate = {
+    name        : "New Project",
+    row         : 0,
+    goal        : 100,
+    freq        : 0,
+    freqStart   : 0,
+    prevRowTime : 0
+};
+
+var userData;
+
+$(document).ready(function(){
+    initializeUserData();
+    setTheme();
+    setKey();
+    showProjectsPage();
+    $('#tab-projects').show();
+    
+    $(".tabs li a").click(function(e) {
+        e.preventDefault();
+        var id = $(this).attr('id');
+        var idParts = id.split('-');
+        var tab = "#tab-"+idParts[1];
+        $('.tab').hide();
+        $(tab).show();
+        $('.tabs li a').removeClass('active');
+        $(this).addClass('active');
+    });
+    
+    $("#newProject").click( function() {
+        createProject();
+    });
+    $("#projects").on("click", "td a", function(e) {
+        e.preventDefault();
+        var projectID = $(this).parents("tr").first().data('project')
+        if($(this).hasClass('openProject')) {
+            $('#cancelChanges').hide();
+            openProject(projectID);
+        } else if($(this).hasClass('deleteProject')) {
+            deleteProject(projectID);
+        }
+    });
+    $('#projectAdvSettingsGrabber').click(function() {
+        $('#projectAdvSettings').toggle();
+    });
+    $('#startProject').click(function() {
+        storeProjectSettings();
+        $('#cancelChanges').show();
+        runProject();
+    });
+    $('#cancelChanges').click(function() {
+        runProject();
+    });
+    $('#changeProjectSettings').click(function() {
+        var projectID = parseInt($('#projectID').val());
+        openProject(projectID);
+    });
+    $('#switchProject, #switchProject2').click(function() {
+        showProjectsPage();
+    });
+});
+
+function initializeUserData() {
+    $.cookie.json = true;
+    userData  = $.cookie('knitting-data');
+    if (typeof userData == 'undefined') {
+        userData = userDataTemplate;
+        doUpgrade();
+        saveUserData();
+    }
+}
+
+function saveUserData() {
+    $.cookie('knitting-data', userData, { expires: 30 });
+}
+
+function doUpgrade() {
+    var settings = $.cookie('knitting-settings');
+    if (typeof settings != 'undefined' && settings) {
+        var time = new Date().getTime();
+        userData.projects[time] = {
+            name        : "Current Project",
+            row         : settings.count,
+            goal        : settings.goal,
+            freq        : settings.repeatFreq,
+            freqStart   : 0,
+            prevRowTime : settings.lastRow
+        }
+        userData.settings.key = settings.key
+    }
+}
+
+function setTheme() {
+    theme = userData.settings.theme;
+    if(typeof theme != 'undefined' && theme == "light") {
+        $('#themeswitch').attr('checked', false);
+        $("#theme").attr('href', "styles/theme-light.css");
+    }
+    $("#themeswitch").change(function() {
+        var theme;
+        if($(this).is(':checked')) {
+            theme = "dark";
+        } else {
+            theme = "light";
+        }
+        setTimeout(function(){$("#theme").attr('href', "styles/theme-"+theme+".css");}, 300);
+        userData.settings.theme = theme;
+        saveUserData();
+    });
+}
+
+function setKey() {
+    key = userData.settings.key;
+    $('#keyCode').html("");
+    $.each(keyMap, function(name, code) {
+        var $element = $("<option></option>").attr("value",code).text(name);
+        if(code == key) {
+            $element.attr("selected",1);
+        }
+        $('#keyCode').append($element);
+    });
+    $("#keyCode").change(function() {
+        userData.settings.key = intVal($(this).val());
+        saveUserData();
+    });
+}
+
+function showProjectsPage() {
+    stopListening();
+    $("#projects").html("");
+    var i = 0;
+    for (var projectID in userData.projects) {
+        if(userData.projects.hasOwnProperty(projectID)){
+            var project = userData.projects[projectID];
+            var projectEntry  = $("<tr></tr>").data('project', projectID);
+            if(i%2==1) {
+                projectEntry.addClass("odd");
+            }
+            var percent = "";
+            if(project.goal > 0)
+                percent = Math.floor((project.row/project.goal)*100) + "%";
+            var projectName    = $("<td></td>").html("<a href='' class='openProject'>"+project.name+"</a>");
+            var projectPercent = $("<td></td>").html("<span>"+percent+"</span>");
+            var projectStart   = $("<td></td>").html("<span>"+formatTimestamp(projectID, true)+"</span>");
+            var projectDelete  = $("<td></td>").html("<a href='' class='deleteProject' title='Delete'>&times;</a>");
+            projectEntry.append(projectName).append(projectPercent).append(projectStart).append(projectDelete);
+            $("#projects").append(projectEntry);
+            i++;
+        }
+    }
+    $("#project-settings, #project-run").hide();
+    $("#initial").show();
+    console.log(userData);
+}
+
+function formatTimestamp(timestamp, dateOnly) {
     if(typeof timestamp == 'undefined' || timestamp == 0)
         return("never");
+    if(typeof dateOnly == 'undefined')
+        dateOnly = false;
+    if(typeof timestamp == 'string' || timestamp instanceof String)
+        timestamp = parseInt(timestamp);
     var dateObj = new Date(timestamp);
     var d = {
-        year   : pad(dateObj.getFullYear(),4),
+        year   : pad(dateObj.getFullYear().toString().substr(2,2),2),
         month  : pad(dateObj.getMonth()+1,2),
         day    : pad(dateObj.getDate(),2),
         hour   : pad(dateObj.getHours(),2),
         minute : pad(dateObj.getMinutes(),2),
         second : pad(dateObj.getSeconds(),2)
     }
-    // american format: hh:mm:ss dd/mm/yyyy
-    return(d.hour+':'+d.minute+':'+d.second+' '+d.month+'/'+d.day+'/'+d.year);
+    if(dateOnly) {
+        // american format: dd/mm/yyyy
+        return(d.month+'/'+d.day+'/'+d.year);
+    } else {
+        // american format: hh:mm:ss dd/mm/yyyy
+        return(d.hour+':'+d.minute+':'+d.second+' '+d.month+'/'+d.day+'/'+d.year);
+    }
 }
+
 function pad(n, width, z) {
     z = z || '0';
     n = n + '';
     return n.length >= width ? n : new Array(width - n.length + 1).join(z) + n;
 }
 
-function initialize() {
-    var settings = {
-        count      : parseInt($('#initialCount').val()),
-        goal       : parseInt($('#goal').val()),
-        key        : $('#keyCode').val(),
-        lastRow    : $('#lastRow').data('value'),
-        repeatFreq : parseInt($('#repeatFreq').val())
+function createProject() {
+    var projectID       = new Date().getTime();
+    userData.projects[projectID] = newProjectTemplate;
+    saveUserData();
+    $('#cancelChanges').hide();
+    openProject(projectID);
+}
+
+function openProject(projectID) {
+    stopListening();
+    if(!userData.projects.hasOwnProperty(projectID))
+        return false;
+    var project = userData.projects[projectID];
+    $('#projectID'  ).val(projectID);
+    $('#projectName').val(project.name);
+    $('#projectRow' ).val(project.row);
+    $('#projectGoal').val(project.goal);
+    $('#projectFreq').val(project.freq);
+    $('#projectFreqStart').val(project.freqStart);
+    $('#lastRow').data('value', project.prevRowTime).text(formatTimestamp(project.prevRowTime));
+    if(project.freq) {
+        $('#projectAdvSettings').show();
+    } else {
+        $('#projectAdvSettings').hide();
     }
-    $.cookie('knitting-settings', settings, { expires: 30 });
-    $('#rowCount').val(settings.count);
-    placeFreqPips(settings.repeatFreq, settings.count);
-    $('#goalNum').text(settings.goal);
+    
+    $("#initial, #project-run").hide();
+    $('#project-settings').show();
+}
+
+function deleteProject(projectID) {
+    if(!userData.projects.hasOwnProperty(projectID)) return false;
+    var projectName = userData.projects[projectID].name;
+    var doDelete = confirm("are you sure you want to delete the project "+ projectName + "?");
+    if(!doDelete) return false;
+    $("#projects tr").each(function() {
+        if($(this).data("project") == projectID) {
+            $(this).remove();
+            return false;
+        }
+    });
+    delete userData.projects[projectID];
+    saveUserData();
+}
+
+function storeProjectSettings() {
+    var projectID = parseInt($('#projectID').val());
+    var projectSettings = {
+        name        : $('#projectName').val(),
+        row         : parseInt($('#projectRow' ).val()),
+        goal        : parseInt($('#projectGoal').val()),
+        freq        : parseInt($('#projectFreq').val()),
+        freqStart   : parseInt($('#projectFreqStart').val()),
+        prevRowTime : $('#lastRow').data('value'),
+    }
+    userData.projects[projectID] = projectSettings;
+    saveUserData();
+}
+
+function runProject() {
+    var projectID = parseInt($('#projectID'  ).val());
+    if(!userData.projects.hasOwnProperty(projectID)) return false;
+    var project   = userData.projects[projectID];
+    $('#projectHeader').text(project.name);
+    $('#rowCount').val(project.row);
+    placeFreqPips(project.freq, (parseInt(project.row) - parseInt(project.freqStart)));
+    $('#goalNum').text(project.goal);
     var percent = 0
-    if(settings.goal > 0)
-        percent = Math.floor((settings.count/settings.goal)*100);
+    if(project.goal > 0)
+        percent = Math.floor((project.row/project.goal)*100);
     $('#goalPercent').text(percent);
     setColors(percent);
-    startListening();
+    startListening(projectID);
+    $('#initial, #project-settings').hide();
+    $('#project-run'  ).show();
 }
+
 var keyIsDown = true;
-function startListening() {
+function startListening(projectID) {
     $('#addRow').on("click", function() {
-        increment();
+        increment(projectID);
     });
     $(document).on("keydown", function(e) {
         e.preventDefault();
-        if((e.keyCode == $('#keyCode').val())&&!keyIsDown) {
+        if((e.keyCode == userData.settings.key)&&!keyIsDown) {
             keyIsDown = true;
-            increment();
+            increment(projectID);
         }
     });
     $(document).on("keyup", function(e) {
-        if((e.keyCode == $('#keyCode').val())) {
+        if(e.keyCode == userData.settings.key) {
             keyIsDown = false;
         }
     });
 }
+
 function stopListening() {
     $('#addRow').off('click');
     $(document).off("keydown");
     $(document).off("keyup");
     keyIsDown = false;
 }
-function increment() {
-    var settings = $.cookie('knitting-settings');
-    if (typeof settings == 'undefined') {
-        settings = {
-            count      : parseInt($('#rowCount').val()),
-            goal       : parseInt($('#goal').val()),
-            key        : $('#keyCode').val(),
-            lastRow    : 0,
-            repeatFreq : parseInt($('#repeatFreq').val())
-        }
-    }
-    settings.count   = parseInt($('#rowCount').val())+1;
-    settings.lastRow = new Date().getTime();
-    $.cookie('knitting-settings', settings, { expires: 30 });
-    $('#rowCount, #initialCount').val(settings.count);
-    $('#lastRow').data('value', settings.lastRow).text(formatTimestamp(settings.lastRow));
-    placeFreqPips(settings.repeatFreq, settings.count);
+
+function increment(projectID) {
+    if(!userData.projects.hasOwnProperty(projectID)) return false;
+    var project = userData.projects[projectID];
+    project.row += 1;
+    project.prevRowTime = new Date().getTime();
+    userData.projects[projectID] = project;
+    saveUserData();
+    $('#rowCount').val(project.row);
+    $('#lastRow').data('value', project.prevRowTime).text(formatTimestamp(project.prevRowTime));
+    placeFreqPips(project.freq, (parseInt(project.row) - parseInt(project.freqStart)));
     var percent = 0;
-    if(settings.goal > 0)
-        percent = Math.floor((settings.count/settings.goal)*100);
+    if(project.goal > 0)
+        percent = Math.floor((project.row/project.goal)*100);
     $('#goalPercent').text(percent);
     setColors(percent);
 }
+
 function placeFreqPips(freq, count) {
-    console.log(freq + " " + count);
-    if(typeof freq == 'undefined'||freq <= 1) return;
+    freq  = parseInt(freq);
+    count = parseInt(count);
+    if(typeof freq == 'undefined' || !freq || freq <= 1) return;
     var currentPip = count % freq;
     var completeLoops = Math.floor(count/freq);
     var $element;
@@ -205,6 +436,7 @@ function placeFreqPips(freq, count) {
         $('#freqPips').append($element);
     }
 }
+
 function setColors(percent) {
     $('#rowCount').removeClass("percent0  percent10 percent20 percent30 percent40  percent50");
     $('#rowCount').removeClass("percent60 percent70 percent80 percent90 percent100 percentOver");
@@ -234,45 +466,3 @@ function setColors(percent) {
         $('#rowCount').addClass("percentOver");
     }
 }
-
-$(document).ready(function(){
-    $.cookie.json = true;
-    var settings = $.cookie('knitting-settings');
-    if (typeof settings == 'undefined') {
-        settings = {
-            count      : 0,
-            goal       : 100,
-            key        : keyMap[defaultKeyCode],
-            repeatFreq : 0,
-            lastRow    : 0
-        }
-    }
-    $('#initialCount').val(settings.count);
-    $('#goal').val(settings.goal);
-    $('#repeatFreq').val(settings.repeatFreq);
-    $('#lastRow').data('value', settings.lastRow).text(formatTimestamp(settings.lastRow));
-    $.each(keyMap, function(name, code) {
-        var $element = $("<option></option>").attr("value",code).text(name);
-        if(code == settings.key) {
-            $element.attr("selected",1);
-        }
-        $('#keyCode').append($element);
-    });
-    
-    $('#startCount').click(function() {
-        initialize();
-        $('#setupDiv').hide();
-        $('#runDiv'  ).show();
-    });
-    $('#cancel').click(function() {
-        startListening();
-        $('#setupDiv').hide();
-        $('#runDiv'  ).show();
-    });
-    $('#resetCount').click(function() {
-        stopListening();
-        $('#setupDiv').show();
-        $('#cancel').show();
-        $('#runDiv'  ).hide();
-    });
-});

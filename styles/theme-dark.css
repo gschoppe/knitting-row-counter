@@ -1,20 +1,58 @@
-.color-primary-bg {
+body {
     background-color: #000;
+    color: #fff
 }
-.color-primary-fg {
-    color: #000;
-}
-.color-secondary-bg {
-    background-color: #fff;
-}
-.color-secondary-fg {
-    color:#fff;
-}
-.color-link {
+
+a {
     color:#ccc;
 }
-.color-link:hover {
+a:hover {
     color:#eee;
+}
+
+.tabs li a {
+    color: #ccc;
+    background-color: #666;
+    text-decoration: none;
+    padding: 5px;
+    border-color: #ccc;
+}
+.tabs li a.active {
+    background-color: #000;
+}
+
+#projectsWrap {
+    background-color: #FFF;
+}
+
+table#projects {
+    color: #444;
+}
+table#projects tr td {
+    border-color: #CCC;
+}
+table#projects tr.odd {
+    background-color: #EEE;
+}
+table#projects a {
+    color: #444;
+}
+table#projects a:hover {
+    color: #666;
+}
+#projectAdvSettingsGrabber {
+    border-color: #ccc;
+    background-color: #ddd;
+    color: #444;
+}
+#projectAdvSettings {
+    border-color:#ccc;
+    background-color: #eee;
+    color: #444;
+}
+
+#rowCount {
+    background-color: #000;
 }
 .color-pip {
     background-color: #F00;
@@ -22,6 +60,7 @@
 .color-pip-done {
     background-color: #0F0;
 }
+
 .percent0,
 .percent10,
 .percent20,

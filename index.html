@@ -19,67 +19,76 @@
     <script type="text/javascript" src="scripts/jquery-cookie.js"></script>
     <script type="text/javascript" src="scripts/rowcounter.js"></script>
 </head>
-<body class="color-primary-bg color-secondary-fg">
+<body>
     <div id="forkongithub"><a href="https://github.com/gschoppe/knitting-row-counter">Fork me on GitHub</a></div>
     <div class="wrap" id="header">
-        <div class="themeswitch">
-            <input type="checkbox" name="themeswitch" class="themeswitch-checkbox" id="themeswitch" checked>
-            <label class="themeswitch-label" for="themeswitch">
-                <span class="themeswitch-inner"></span>
-                <span class="themeswitch-switch"></span>
-            </label>
-        </div>
-        <script type="text/javascript">
-            $(document).ready(function() {
-                $.cookie.json = true;
-                var theme = $.cookie('knitting-theme');
-                if(typeof theme != 'undefined' && theme == "light") {
-                    $('#themeswitch').attr('checked', false);
-                    $("#theme").attr('href', "styles/theme-light.css");
-                }
-                $("#themeswitch").change(function() {
-                    var theme;
-                    if($(this).is(':checked')) {
-                        theme = "dark";
-                    } else {
-                        theme = "light";
-                    }
-                    setTimeout(function(){$("#theme").attr('href', "styles/theme-"+theme+".css");}, 300);
-                    $.cookie('knitting-theme', theme, { expires: 30 });
-                });
-            });
-        </script>
         <!-- Go to www.addthis.com/dashboard to customize your tools -->
         <div class="addthis_sharing_toolbox"></div>
-        
         <h1>Knitting Row Counter</h1>
-        <i>A speedy project by Greg Schoppe (<a class="color-link" href="http://gschoppe.com">gschoppe.com</a>)</i><br/>
-        <a class="color-link" href="pedals.html">See Compatible Foot Pedals &raquo;</a>
+        <i>by Greg Schoppe (<a href="http://gschoppe.com">gschoppe.com</a>)</i><br/>
+        <a href="pedals.html">See Compatible Foot Pedals &raquo;</a>
     </div>
-    <div id="setupDiv" class="wrap">
-        <h2>Settings</h2>
-        <label for="initialCount">Rows Already Completed: </label>
-        <input type="number" name="initialCount" id="initialCount" value="0"/><br/>
-        <label for="initialCount">Total Rows Needed: </label>
-        <input type="number" name="goal" id="goal" value="1"/>
-        <label for="repeatFreq">Pattern repeats every X rows: </label>
-        <input type="number" name="repeatFreq" id="repeatFreq" value="0"/><br/>
-        <i>(enter 0 to not track repeats)</i>
-        <br/><br/>
-        <label for="keyCode">Key to Watch: </label>
-        <select name="keyCode" id="keyCode"></select><br/><br/>
-        <input type="button" name="startCount" id="startCount" value="Start Counting"/>
-        <input type="button" name="cancel" id="cancel" value="Cancel Changes"/>
-    </div>
-    <div id="runDiv" class="wrap">
-        <label for="rowCount">Completed Rows:</label>
-        <input type="number" name="rowCount" id="rowCount" class="color-primary-bg" value='0' disabled='1'/>
-        <div id="freqPips"></div>
-        of <span id="goalNum">0</span> Total Rows (<span id="goalPercent">0</span>% Done)<br/>
-        last row completed: <span id="lastRow" data-value="0">never</span>
-        <br/><br/>
-        <input type="button" name="addRow" id="addRow" value="Finished a Row"/>
-        <input type="button" name="resetCount" id="resetCount" value="Change Settings"/>
+    <div class="wrap">
+        <ul class="tabs">
+            <li><a href="" id="goto-projects" class="active">Projects</a></li><li><a href="" id="goto-settings">App Settings</a></li>
+        </ul>
+        <div class="tab" id="tab-projects">
+            <div id="initial">
+                <h2>Projects:</h2>
+                <div id="projectsWrap">
+                    <table id="projects">
+                        
+                    </table>
+                </div>
+                <input type="button" id="newProject" value="New Project" class="primary"/>
+            </div>
+            <div id="project-settings">
+                <h2>Project Settings</h2>
+                <label for="projectName">Project Name: </label>
+                <input type="text" name="projectName" id="projectName" value=""/><br/>
+                <label for="projectRow">Rows Already Completed: </label>
+                <input type="number" name="projectRow" id="projectRow" value="0"/><br/>
+                <label for="projectGoal">Total Rows Needed: </label>
+                <input type="number" name="projectGoal" id="projectGoal" value="1"/><br/>
+                <div id="projectAdvSettingsGrabber">Does the project contain a repeated pattern?</div>
+                <div id="projectAdvSettings">
+                    <label for="projectFreq">Pattern repeats every X rows: </label>
+                    <input type="number" name="projectFreq" id="projectFreq" value="0"/><br/>
+                    <i>(enter 0 to not track repeats)</i>
+                    <label for="projectFreqStart">Pattern starts on row: </label>
+                    <input type="number" name="projectFreqStart" id="projectFreqStart" value="0"/><br/>
+                </div>
+                <br/>
+                <input type="button" name="startProject"  id="startProject"  value="Start Counting"  class="primary"  />
+                <input type="button" name="cancelChanges" id="cancelChanges" value="Cancel Changes"  class="secondary"/><!--
+             --><input type="button" name="switchProject" id="switchProject" value="Change Projects" class="secondary"/>
+            </div>
+            <div id="project-run">
+                <input type="hidden" id="projectID"/>
+                <h2 id="projectHeader"></h2>
+                <label for="rowCount">Completed Rows:</label>
+                <input type="number" name="rowCount" id="rowCount" value='0' disabled='1'/>
+                <div id="freqPips"></div>
+                of <span id="goalNum">0</span> Total Rows (<span id="goalPercent">0</span>% Done)<br/>
+                last row completed: <span id="lastRow" data-value="0">never</span>
+                <br/><br/>
+                <input type="button" name="addRow" id="addRow" value="Finished a Row" class="primary"/>
+                <input type="button" name="changeProjectSettings" id="changeProjectSettings" value="Change Settings" class="secondary"/><!--
+             --><input type="button" name="switchProject" id="switchProject2" value="Switch Projects" class="secondary"/>
+            </div>
+        </div>
+        <div class="tab" id="tab-settings">
+            <label for="theme">Theme: </label>
+            <div class="themeswitch">
+                <input type="checkbox" name="themeswitch" class="themeswitch-checkbox" id="themeswitch" checked>
+                <label class="themeswitch-label" for="themeswitch">
+                    <span class="themeswitch-inner"></span>
+                    <span class="themeswitch-switch"></span>
+                </label>
+            </div>
+            <label for="keyCode">Add Row on Keypress: </label>
+            <select name="keyCode" id="keyCode"></select>
+        </div>
     </div>
     <div class="wrap" id="ad-block">
         <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>

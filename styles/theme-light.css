@@ -1,20 +1,57 @@
-.color-primary-bg {
+body {
+    background-color: #ff;
+    color: #444;
+}
+
+a {
+    color:#666;
+}
+a:hover {
+    color:#888;
+}
+
+.tabs li a {
+    color: #666;
+    background-color: #ccc;
+    text-decoration: none;
+    padding: 5px;
+    border-color: #ccc;
+}
+.tabs li a.active {
+    background-color: #fff;
+    border-bottom-color: #fff;
+}
+
+#projectsWrap {
     background-color: #FFF;
 }
-.color-primary-fg {
-    color: #FFF;
+
+table#projects {
+    color: #444;
 }
-.color-secondary-bg {
-    background-color: #000;
+table#projects tr td {
+    border-color: #CCC;
 }
-.color-secondary-fg {
-    color:#000;
+table#projects tr.odd {
+    background-color: #EEE;
 }
-.color-link {
-    color:#777;
+table#projects a {
+    color: #444;
 }
-.color-link:hover {
-    color:#444;
+table#projects a:hover {
+    color: #666;
+}
+#projectAdvSettingsGrabber {
+    border-color: #ccc;
+    background-color: #ddd;
+    color: #444;
+}
+#projectAdvSettings {
+    border-color:#ccc;
+    background-color: #eee;
+}
+#rowCount {
+    background-color: #fff;
 }
 .color-pip {
     background-color: #F00;
@@ -22,6 +59,7 @@
 .color-pip-done {
     background-color: #0F0;
 }
+
 .percent0,
 .percent10,
 .percent20,
