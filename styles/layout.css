@@ -36,6 +36,14 @@ input[type=button].secondary {
 table#projects {
     border-collapse:collapse;
     width: 100%;
+    min-width: 361px;
+}
+table#projects::empty {
+    content: "No saved projects";
+    font-style: italic;
+    text-align: center;
+    display: block;
+    padding-top: 50px;
 }
 table#projects tr td {
     border-bottom: 1px solid #CCC;
