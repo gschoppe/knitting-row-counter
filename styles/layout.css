@@ -38,7 +38,7 @@ table#projects {
     width: 100%;
     min-width: 361px;
 }
-table#projects::empty {
+table#projects:empty::before {
     content: "No saved projects";
     font-style: italic;
     text-align: center;
